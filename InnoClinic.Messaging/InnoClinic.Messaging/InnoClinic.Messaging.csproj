@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>InnoClinic.Messaging</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Authors>InnoClinic</Authors>
     <Description>RabbitMQ Messaging implementation with flexible configuration</Description>
     <PackageTags>rabbitmq messaging</PackageTags>
