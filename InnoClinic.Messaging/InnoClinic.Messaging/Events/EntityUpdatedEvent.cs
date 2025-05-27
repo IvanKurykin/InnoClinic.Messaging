@@ -1,9 +1,8 @@
-﻿namespace InnoClinic.Messaging.Events;
+﻿namespace InnoClinic.Messaging.Events.EntityUpdatedEvent;
 
-public record EntityUpdatedEvent<T>
+public record EntityUpdatedEvent<T> : IEntityEvent where T : class
 {
-    public Guid Id { get; init; }
-    public string? EntityType { get; init; } 
-    public DateTime UpdatedAt { get; init; }
-    public T? Payload { get; init; }
+    public string EntityType => typeof(T).Name;
+    public DateTime UpdatedAt { get; init; } = DateTime.UtcNow;
+    public required T Payload { get; set; }
 }
