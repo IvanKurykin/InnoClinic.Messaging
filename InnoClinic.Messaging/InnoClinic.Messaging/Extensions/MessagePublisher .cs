@@ -1,4 +1,5 @@
 ﻿using InnoClinic.Messaging.Abstractions;
+using InnoClinic.Messaging.Events;
 using InnoClinic.Messaging.Events.EntityUpdatedEvent;
 using MassTransit;
 
@@ -15,16 +16,22 @@ internal class MessagePublisher : IMessagePublisher
         var entityName = typeof(T).Name.ToLower();
         var eventMessage = new EntityUpdatedEvent<T> { Payload = payload };
 
-        Console.WriteLine($"DEBUG [MessagePublisher]: Attempting to publish EntityUpdatedEvent<{typeof(T).Name}>. RoutingKey: '{entityName}.updated'. Payload Type: {payload?.GetType().FullName}");
-        try
-        {
-            await _publishEndpoint.Publish(eventMessage, ctx => ctx.SetRoutingKey($"{entityName}.updated"), cancellationToken);
-            Console.WriteLine($"DEBUG [MessagePublisher]: Publish call for EntityUpdatedEvent<{typeof(T).Name}> COMPLETED (await returned).");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"ERROR [MessagePublisher]: Exception during publish of EntityUpdatedEvent<{typeof(T).Name}>: {ex}");
-            throw; 
-        }
+        await _publishEndpoint.Publish(eventMessage, ctx => ctx.SetRoutingKey($"{entityName}.updated"), cancellationToken);
+    }
+
+    public async Task PublishEntityCreated<T>(T payload, CancellationToken cancellationToken = default) where T : class
+    {
+        var entityName = typeof(T).Name.ToLower();
+        var eventMessage = new EntityCreatedEvent<T> { Payload = payload };
+
+        await _publishEndpoint.Publish(eventMessage, ctx => ctx.SetRoutingKey($"{entityName}.created"), cancellationToken);
+    }
+
+    public async Task PublishEntityDeleted<T>(T payload, string id, CancellationToken cancellationToken = default) where T : class
+    {
+        var entityName = typeof(T).Name.ToLower();
+        var eventMessage = new EntityDeletedEvent<T> { Payload = payload, Id = id };
+
+        await _publishEndpoint.Publish(eventMessage, ctx => ctx.SetRoutingKey($"{entityName}.deleted"), cancellationToken);
     }
 }
